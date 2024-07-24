@@ -1,0 +1,18 @@
+{
+    "name": "Sperlich.Audio.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:589a581d62324ac48acb591cf71e8347"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

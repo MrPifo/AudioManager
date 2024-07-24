@@ -1,11 +1,7 @@
-using Sperlich.AStar;
-using Sperlich.Audio;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Sperlich.Editor {
+namespace Sperlich.Audio.Editor {
 	[CustomPropertyDrawer(typeof(StringEnum<>), true)]
 	public class StringEnumDrawer : PropertyDrawer {
 
