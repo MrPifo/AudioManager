@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 14e8128ad1b197c40bbd58f5bbe96707, type: 3}
-  m_Name: Snowrowl
+  m_Name: Barefooticefootsteps2
   m_EditorClassIdentifier: 
-  name: SnowRowl
-  uniqueId: -725734095
-  clip: {fileID: 8300000, guid: 7a15829517470dd4abf22b1053a9c822, type: 3}
+  name: BarefootIceFootsteps2
+  uniqueId: 1146950092
+  clip: {fileID: 8300000, guid: 206d3fb1f9e38c448bab1b5eb4916ddc, type: 3}

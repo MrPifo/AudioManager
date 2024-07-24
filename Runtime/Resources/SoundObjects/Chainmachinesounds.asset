@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: ChainMachineSounds
   uniqueId: 865943611
-  clip: {fileID: 8300000, guid: 1e8775bb4a0e682429b536f5b334162d, type: 3}
+  clip: {fileID: 8300000, guid: 2a1b8afe92271864aa337ac84162343a, type: 3}

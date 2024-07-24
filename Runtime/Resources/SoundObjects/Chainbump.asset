@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: ChainBump
   uniqueId: 1080556335
-  clip: {fileID: 8300000, guid: bed92a181cdad7d45a1c7f3e5518d28f, type: 3}
+  clip: {fileID: 8300000, guid: baa028ad3b04db84c861bea7313767db, type: 3}

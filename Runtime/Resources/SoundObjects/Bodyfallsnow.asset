@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: BodyFallSnow
   uniqueId: -1904951190
-  clip: {fileID: 8300000, guid: c38b0426163152448b784ecf8be9c12a, type: 3}
+  clip: {fileID: 8300000, guid: 4160d7c2b25730848aa2b8a7f58b3cf6, type: 3}

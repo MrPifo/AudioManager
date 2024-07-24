@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: BulletRicochet
   uniqueId: 774377363
-  clip: {fileID: 8300000, guid: 2292bd182e18e9344a3f098497e66896, type: 3}
+  clip: {fileID: 8300000, guid: d2e6a6656b638d440ae1a58262de5486, type: 3}

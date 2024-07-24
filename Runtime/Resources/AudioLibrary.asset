@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: AudioLibrary
   m_EditorClassIdentifier: 
   files:
-  - sObject: {fileID: 11400000, guid: 0cdec2c33e96c124f907b298c06cacf5, type: 2}
-    sound: -190713435
+  - sObject: {fileID: 11400000, guid: e93a80de0c96d994abc6af0b72b345a8, type: 2}
+    sound: 1146950092
   - sObject: {fileID: 11400000, guid: 5830201cdccf6cd438fbe95c4aa7f544, type: 2}
     sound: -1904951190
   - sObject: {fileID: 11400000, guid: 1cd97aa929896744384cc8183b59d408, type: 2}
@@ -27,29 +27,3 @@ MonoBehaviour:
     sound: 865943611
   - sObject: {fileID: 11400000, guid: 27948c59b3e5aaf4aa577f142f792070, type: 2}
     sound: -341006722
-  - sObject: {fileID: 11400000, guid: fa6bf3b1c6c7d7f48afbd9fd2f6e2139, type: 2}
-    sound: 1294355808
-  - sObject: {fileID: 11400000, guid: 2232ab8caaace9d4a81c10dfc9f7dce7, type: 2}
-    sound: 260598031
-  - sObject: {fileID: 11400000, guid: dc579ba779e30b2438290d91991ec6be, type: 2}
-    sound: 788727089
-  - sObject: {fileID: 11400000, guid: b14f9af4a54a46d45a5ea0313963266e, type: 2}
-    sound: 249873243
-  - sObject: {fileID: 11400000, guid: 5e9137785d5250f43871ac19a5c1760f, type: 2}
-    sound: -849357128
-  - sObject: {fileID: 11400000, guid: e0122ab432a25bd45bbdea4f6857ffba, type: 2}
-    sound: -725734095
-  - sObject: {fileID: 11400000, guid: d51e6fc3e7ffeae4c9093c16d9bb2b0b, type: 2}
-    sound: 91170019
-  - sObject: {fileID: 11400000, guid: b00f9e1aab552fc4db48ad4424bc87bc, type: 2}
-    sound: 979184727
-  - sObject: {fileID: 11400000, guid: 0f57df0b884883443827f710a1be779c, type: 2}
-    sound: -502310508
-  - sObject: {fileID: 11400000, guid: 51780a2183642a640a4ade6132b54a1d, type: 2}
-    sound: 1916582466
-  - sObject: {fileID: 11400000, guid: 0bae635ab12a54b4db2a1b32d4b8af35, type: 2}
-    sound: -271466710
-  - sObject: {fileID: 11400000, guid: 346cebd82f558c745b6332dc87c3e51b, type: 2}
-    sound: 1561749054
-  - sObject: {fileID: 11400000, guid: 25f6deb867b6fec429d2295cbe13704d, type: 2}
-    sound: 1407834906

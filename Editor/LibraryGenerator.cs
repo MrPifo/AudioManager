@@ -13,12 +13,14 @@ namespace Sperlich.Audio.Editor {
 	public class LibraryGenerator {
 
 		public const string EnumContextName = "Sounds";
-		public static string AudioSrcFolder => Path.Combine(Application.dataPath.Replace("/", "\\"), "Audio");
+		public static string AudioSrcFolder => Path.Combine(ProjectRootFolder, "Assets/Audio");
 		public static string LibraryAssetPath => Path.Combine(ResourceFolderPath, "AudioLibrary.asset");
 		public static string SoundObjectFolderPath => Path.Combine(ResourceFolderPath, "SoundObjects");
-		public static string SoundsFilePath => Path.Combine(PackageRootFolder, "Sounds.cs");
-		public static string ResourceFolderPath => Path.Combine(PackageRootFolder, "Resources");
-		public static string PackageRootFolder => Path.Combine(Application.dataPath.Replace("/", "\\"), GetFolderPath<AudioManager>());
+		public static string SoundsFilePath => Path.Combine(RuntimeFolder, "Sounds.cs");
+		public static string ResourceFolderPath => Path.Combine(RuntimeFolder, "Resources");
+		public static string RuntimeFolder => Path.Combine(PackageRootFolder, "Runtime");
+		public static string PackageRootFolder => Path.GetFullPath("../", GetRelativeFolderPath<AudioManager>());
+		public static string ProjectRootFolder => Path.GetFullPath("../", Application.dataPath);
 		public static readonly string[] ValidExtensions = {
 			".ogg",
 			".wav",
@@ -31,8 +33,6 @@ namespace Sperlich.Audio.Editor {
 		};
 
 		public static void GenerateLibrary() {
-			Debug.Log(PackageRootFolder);
-			return;
 			CreateDirectoryIfNotExists(ResourceFolderPath);
 			CreateDirectoryIfNotExists(AudioSrcFolder);
 			CreateDirectoryIfNotExists(SoundObjectFolderPath, true);
@@ -42,7 +42,7 @@ namespace Sperlich.Audio.Editor {
 
 			foreach (string file in GetSortedAudioFiles(AudioSrcFolder)) {
 				string fileName = SanitizeEnumName(AudioManager.GetFileName(file), true);
-				string relPath = MakeRelative(file, "Assets");
+				string relPath = MakeRelative(file);
 				AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(relPath);
 
 				// Create new SoundObject
@@ -55,7 +55,8 @@ namespace Sperlich.Audio.Editor {
 				soundObjects.Add(sObject);
 
 				// Save the asset
-				string assetPath = Path.Combine(MakeRelative(SoundObjectFolderPath, "Assets"), $"{fileName}.asset");
+				string assetPath = Path.Combine(SoundObjectFolderPath, $"{fileName}.asset");
+				assetPath = MakeRelative(assetPath);
 				AssetDatabase.CreateAsset(sObject, assetPath);
 			}
 			#endregion
@@ -71,7 +72,7 @@ namespace Sperlich.Audio.Editor {
 			foreach (SoundObject s in soundObjects.OrderBy(s => s.name)) {
 				library._internalAddFile(new AudioLibrary.AudioFile(s, (Sounds)s.uniqueId));
 			}
-			AssetDatabase.CreateAsset(library, MakeRelative(LibraryAssetPath, "Assets"));
+			AssetDatabase.CreateAsset(library, MakeRelative(LibraryAssetPath));
 			AssetDatabase.SaveAssets();
 
 			UnityEngine.Debug.Log($"Audio Library recompiled. \n Registered Sounds {System.Enum.GetValues(typeof(Sounds)).Length}");
@@ -188,19 +189,23 @@ namespace Sperlich.Audio.Editor {
 				return id;
 			}
 		}
-		public static string MakeRelative(string filePath, string referencePath) {
-			int index = filePath.IndexOf(referencePath);
-			return filePath.Substring(index, filePath.Length - index);
+		public static string MakeRelative(string filePath) {
+			return Path.GetRelativePath(ProjectRootFolder, filePath);
 		}
-		public static string GetFolderPath<T>() where T : UnityEngine.Object {
-			string path = "";
+		public static string GetRelativeFolderPath<T>() where T : UnityEngine.Object {
+			string filePath = "";
 
-			foreach(string guid in AssetDatabase.FindAssets("AudioManager")) {
-				string asset = AssetDatabase.GUIDToAssetPath(guid);
-				Debug.Log(asset);
+			foreach(string guid in AssetDatabase.FindAssets($"{typeof(T).Name}")) {
+				string absolutePath = AssetDatabase.GUIDToAssetPath(guid);
+				string fileName = Path.GetFileName(absolutePath);
+				
+				if(fileName == $"{typeof(T).Name}.cs") {
+					filePath = absolutePath;
+				}
 			}
 
-			return path;
+			string dirPath = Path.Combine(ProjectRootFolder, Path.GetDirectoryName(filePath));
+			return dirPath;
 		}
 		public static void DeleteFileIfExists(string filePath) {
 			if (File.Exists(filePath)) {
