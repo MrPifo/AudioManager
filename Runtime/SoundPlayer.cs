@@ -5,11 +5,11 @@ using UnityEngine.Events;
 namespace Sperlich.Audio {
 	public class SoundPlayer : MonoBehaviour {
 
-		public AudioManager.AudioPreset preset;
+		public AudioPreset preset;
 		public bool isPlaying;
 		public bool isPaused;
 		public bool isLooping;
-		public AudioClip Clip => _source.clip;
+		public AudioClip Clip => Options.Clip;
 		public AudioSource Source {
 			get {
 				if(_source == null) {
@@ -36,33 +36,36 @@ namespace Sperlich.Audio {
 		public float Volume { get => _source.volume; set => _source.volume = value; }
 		public float Spatial { get => _source.spatialBlend; set => _source.spatialBlend = value; }
 		public UnityEvent OnPlayComplete { get; private set; } = new UnityEvent();
+		public PlayOptions Options { get; set; }
+
+		internal bool _isFree;
+		/// <summary>
+		/// Set this to true to avoid that this Player is automaticially freed.
+		/// </summary>
+		public bool Reserve { get; set; }
+		public bool IsFree => _isFree && Reserve == false && Source.isPlaying == false;
 
 		public void Play(float volume, bool loop) {
 			Source.volume = Mathf.Clamp01(volume);
-			Initialize(_source.clip, _source.pitch, volume, transform.position, _source.spatialBlend, _source.minDistance, _source.maxDistance, _source.spread, loop);
+			Options.Loop = loop;
+			Initialize(Options);
 		}
-		public void Initialize(AudioClip clip, float pitch, float volume, Vector3 pos, float spatial, float minDistance, float maxDistance, float spread, bool loop) {
+		public void Initialize(PlayOptions options) {
+			_isFree = false;
+			Options = options;
 			bindParent = null;
-			name = $"{clip.name}_Playing";
+			name = $"{Clip.name}_Playing";
 			Source.playOnAwake = false;
-			isLooping = loop;
-			transform.position = pos;
+			isLooping = Options.Loop;
 			isPlaying = true;
-			_source.pitch = pitch;
-			_source.clip = clip;
-			_source.loop = loop;
-			_source.spatialBlend = spatial;
-			_source.minDistance = minDistance;
-			_source.maxDistance = maxDistance;
-			_source.spread = spread;
-			_source.volume = volume;
+			Options.Apply(_source);
 			_source.Play();
 
-			if (loop == false) {
+			if (Options.Loop == false) {
 				StartCoroutine(IDelay());
 				IEnumerator IDelay() {
 					float time = 0;
-					while (time < clip.length) {
+					while (time < Clip.length) {
 						yield return null;
 						if (isPaused == false) {
 							time += Time.deltaTime;
@@ -72,7 +75,8 @@ namespace Sperlich.Audio {
 					OnPlayComplete.RemoveAllListeners();
 					isPlaying = false;
 
-					name = $"{clip.name}_Finished";
+					name = $"{Clip.name}_Finished";
+					Free();
 				}
 			}
 		}
@@ -82,6 +86,7 @@ namespace Sperlich.Audio {
 
 			name = $"{Clip.name}_Stopped";
 			bindParent = null;
+			_isFree = true;
 		}
 		public void Stop(float fadeTime) {
 			StartCoroutine(Fade());
@@ -96,6 +101,7 @@ namespace Sperlich.Audio {
 				_source.Stop();
 				bindParent = null;
 				name = $"{Clip.name}_Stopped";
+				_isFree = true;
 			}
         }
 		public void Pause() {
@@ -124,6 +130,9 @@ namespace Sperlich.Audio {
 					yield return null;
 				}
 			}
+		}
+		public void Free() {
+			_isFree = true;
 		}
 
 		public SoundPlayer FadeIn(float fadeTime) {

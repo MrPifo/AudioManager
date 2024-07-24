@@ -4,6 +4,10 @@ using System.IO;
 using System.Linq;
 using System;
 using System.Collections;
+using static UnityEditor.PlayerSettings;
+using System.Threading;
+using UnityEditor.Presets;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,8 +15,6 @@ using UnityEditor;
 
 namespace Sperlich.Audio {
 	public partial class AudioManager : MonoBehaviour {
-
-		public enum AudioPreset { Default, Filter, Ambient }
 
 		[Range(0f, 1f)]
 		public float globalVolume;
@@ -36,8 +38,6 @@ namespace Sperlich.Audio {
 		private bool initialized;
 		private Transform presetContainer;
 		private Transform soundPlayersContainer;
-		private SoundPlayer currentMusicPlayer;
-		private SoundPlayer currentAmbientPlayer;
 		private List<SoundPlayer> audioPresets;
 		private List<SoundPlayer> pooledPlayers;
 
@@ -47,7 +47,7 @@ namespace Sperlich.Audio {
 			get {
 				if(_instance == null) {
 					_instance = GetInstance();
-					_instance.Initialize("Audio");
+					_instance.Initialize();
 				}
 
 				return _instance;
@@ -57,7 +57,7 @@ namespace Sperlich.Audio {
 			}
 		}
 
-		public void Initialize(string audioFolder) {
+		public void Initialize() {
 			if (initialized == false) {
 				audioPresets = new List<SoundPlayer>();
 				pooledPlayers = new List<SoundPlayer>();
@@ -138,22 +138,54 @@ namespace Sperlich.Audio {
 
 		#region Sound API
 		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, Vector3 pos, float volume, float pitch) => Play3DSound(sound, type, spatial, pos, volume, pitch, pitch);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, spatial, 9999, pos, volume, maxPitch, minPitch);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float maxDistance, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, spatial, 0f, maxDistance, pos, volume, maxPitch, minPitch);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float minDistance, float maxDistance, Vector3 pos, float volume, float maxPitch, float minPitch) => Play3DSound(sound, type, spatial, minDistance, maxDistance, 0f, pos, volume, maxPitch, minPitch);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float maxPitch, float minPitch) => Play3DSound(sound, type, AudioPreset.Default, spatial, minDistance, maxDistance, spread, pos, volume, maxPitch, minPitch);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, AudioPreset preset, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float maxPitch, float minPitch) => PlaySound(sound, type, preset, minPitch, maxPitch, volume, pos, spatial, minDistance, maxDistance, spread, false);
-		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, AudioPreset preset, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float maxPitch, float minPitch, bool loop) => PlaySound(sound, type, preset, minPitch, maxPitch, volume, pos, spatial, minDistance, maxDistance, spread, loop);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, spatial, 9999, pos, volume, minPitch, maxPitch);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float maxDistance, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, spatial, 0f, maxDistance, pos, volume, minPitch, maxPitch);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float minDistance, float maxDistance, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, spatial, minDistance, maxDistance, 0f, pos, volume, minPitch, maxPitch);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, AudioPreset.Default, spatial, minDistance, maxDistance, spread, pos, volume, minPitch, maxPitch);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, AudioPreset preset, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float minPitch, float maxPitch) => Play3DSound(sound, type, preset, spatial, minDistance, maxDistance, spread, pos, volume, minPitch, maxPitch, false);
+		public static SoundPlayer Play3DSound(Sounds sound, SoundType type, AudioPreset preset, float spatial, float minDistance, float maxDistance, float spread, Vector3 pos, float volume, float minPitch, float maxPitch, bool loop) {
+			return PlaySound(new PlayOptions() {
+				Sound = sound,
+				Type = type,
+				Preset = preset,
+				Volume = volume,
+				MinPitch = minPitch,
+				MaxPitch = maxPitch,
+				Spatial = spatial,
+				MinDistance = minDistance,
+				MaxDistance = maxDistance,
+				Spread = spread,
+				Loop = loop,
+				WorldPos = pos,
+				Is3D = true
+			});
+		}
+		public static SoundPlayer Play3DSound(PlayOptions options) {
+			return PlaySound(options);
+		}
+		
 		public static SoundPlayer PlaySound(Sounds sound, SoundType type) => PlaySound(sound, type, 1f);
 		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float volume) => PlaySound(sound, type, volume, 1f);
 		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float volume, float pitch) => PlaySound(sound, type, pitch, pitch, volume);
-		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float minPitch, float maxPitch, float volume) => PlaySound(sound, type, AudioPreset.Default, minPitch, maxPitch, volume, Vector3.zero, 0, 0, 0, 0, false);
-		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float minPitch, float maxPitch, float volume, bool loop) => PlaySound(sound, type, AudioPreset.Default, minPitch, maxPitch, volume, Vector3.zero, 0, 0, 0, 0, loop);
-		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float pitch, float volume) => PlaySound(sound, type, preset, pitch, pitch, volume, Vector3.zero, 0, 0, 0, 0, false);
-		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float pitch, float volume, bool loop) => PlaySound(sound, type, preset, pitch, pitch, volume, Vector3.zero, 0, 0, 0, 0, loop);
-		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float minPitch, float maxPitch, float volume, Vector3 pos, float spatial, float minDistance, float maxDistance, float spread, bool loop) {
-			float finalVolume = volume * Instance.globalVolume;
-			switch (type) {
+		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float minPitch, float maxPitch, float volume) => PlaySound(sound, type, AudioPreset.Default, minPitch, maxPitch, volume, false);
+		public static SoundPlayer PlaySound(Sounds sound, SoundType type, float minPitch, float maxPitch, float volume, bool loop) => PlaySound(sound, type, AudioPreset.Default, minPitch, maxPitch, volume, loop);
+		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float pitch, float volume) => PlaySound(sound, type, preset, pitch, pitch, volume, false);
+		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float pitch, float volume, bool loop) => PlaySound(sound, type, preset, pitch, pitch, volume, loop);
+		public static SoundPlayer PlaySound(Sounds sound, SoundType type, AudioPreset preset, float minPitch, float maxPitch, float volume, bool loop) {
+			return PlaySound(new PlayOptions() {
+				Sound = sound,
+				Type = type,
+				Preset = preset,
+				Volume = volume,
+				MinPitch = minPitch,
+				MaxPitch = maxPitch,
+				MaxDistance = float.MaxValue,
+				Loop = loop,
+			});
+		}
+		public static SoundPlayer PlaySound(PlayOptions options) {
+			float finalVolume = options.Volume * Instance.globalVolume;
+			switch (options.Type) {
 				case SoundType.Effect:
 					finalVolume *= Instance.soundEffectVolume;
 					break;
@@ -165,48 +197,14 @@ namespace Sperlich.Audio {
 					break;
 			}
 
-			AudioClip clip = Instance.Library.GetClip(sound);
-			SoundPlayer pooledItem = GetFreeSoundPlayer(preset);
-			pooledItem.Initialize(clip, UnityEngine.Random.Range(minPitch, maxPitch), finalVolume, pos, spatial, minDistance, maxDistance, spread, loop);
-			return pooledItem;
-		}
-		#endregion
-		#region Music API
-		public static SoundPlayer PlayMusic(Sounds sound, bool volume, bool loop = false) => PlayMusic(sound, 1f, loop);
-		public static SoundPlayer PlayMusic(Sounds sound, float volume, bool loop = false) => PlayMusic(sound, AudioPreset.Default, volume, loop);
-		public static SoundPlayer PlayMusic(Sounds sound, AudioPreset preset, float volume, bool loop = false) {
-			if(Instance.currentMusicPlayer != null && Instance.currentMusicPlayer.Source.isPlaying) {
-				Instance.currentMusicPlayer.Stop();
-			}
-			float finalVolume = volume * Instance.globalVolume * Instance.musicVolume;
-			AudioClip clip = Instance.Library.GetClip(sound);
-			SoundPlayer pooledItem = GetFreeSoundPlayer(preset);
-			pooledItem.Initialize(clip, 1f, finalVolume, Vector3.zero, 0f, 0f, 0f, 0f, loop);
-			pooledItem.Source.loop = true;
-			Instance.currentMusicPlayer = pooledItem;
-
-			return pooledItem;
-		}
-		#endregion
-		#region Ambient API
-		public static SoundPlayer PlayAmbient(Sounds sound, bool loop = false) => PlayAmbient(sound, 1f, loop);
-		public static SoundPlayer PlayAmbient(Sounds sound, float volume, bool loop = false) => PlayAmbient(sound, AudioPreset.Default, volume, loop);
-		public static SoundPlayer PlayAmbient(Sounds sound, AudioPreset preset, float volume, bool loop = false) {
-			if (Instance.currentAmbientPlayer != null && Instance.currentAmbientPlayer.Source.isPlaying) {
-				Instance.currentAmbientPlayer.Stop();
-			}
-			float finalVolume = volume * Instance.globalVolume * Instance.ambientVolume;
-			AudioClip clip = Instance.Library.GetClip(sound);
-			SoundPlayer pooledItem = GetFreeSoundPlayer(preset);
-			pooledItem.Initialize(clip, 1f, finalVolume, Vector3.zero, 0f, 0f, 0f, 0f, loop);
-			pooledItem.Source.loop = true;
-			Instance.currentAmbientPlayer = pooledItem;
-
+			options.Volume = finalVolume;
+			SoundPlayer pooledItem = GetFreeSoundPlayer(options.Preset);
+			pooledItem.Initialize(options);
 			return pooledItem;
 		}
 		#endregion
 		public static SoundPlayer GetFreeSoundPlayer(AudioPreset preset = AudioPreset.Default) {
-			SoundPlayer pooledItem = Instance.pooledPlayers.Where(p => p.preset == preset && p.isPlaying == false).FirstOrDefault();
+			SoundPlayer pooledItem = Instance.pooledPlayers.Where(p => p.preset == preset && p.IsFree).FirstOrDefault();
 			if (pooledItem == null) {
 				pooledItem = Instantiate(Instance.audioPresets.Find(a => a.preset == preset).gameObject, Instance.soundPlayersContainer).GetComponent<SoundPlayer>();
 				Instance.pooledPlayers.Add(pooledItem);

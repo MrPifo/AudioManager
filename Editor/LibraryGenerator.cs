@@ -70,7 +70,7 @@ namespace Sperlich.Audio.Editor {
 			#region Generate Library
 			AudioLibrary library = ScriptableObject.CreateInstance<AudioLibrary>();
 			foreach (SoundObject s in soundObjects.OrderBy(s => s.name)) {
-				library._internalAddFile(new AudioLibrary.AudioFile(s, (Sounds)s.uniqueId));
+				library.files.Add(new AudioLibrary.AudioFile(s, (Sounds)s.uniqueId));
 			}
 			AssetDatabase.CreateAsset(library, MakeRelative(LibraryAssetPath));
 			AssetDatabase.SaveAssets();
@@ -179,15 +179,7 @@ namespace Sperlich.Audio.Editor {
 				input = SanitizeEnumName(input);
 			}
 
-			using (var md5 = MD5.Create()) {
-				// Compute the hash of the input string
-				byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-				// Convert the first 4 bytes of the hash to an integer
-				int id = BitConverter.ToInt32(hashBytes, 0);
-
-				return id;
-			}
+			return input.GetHashCode();
 		}
 		public static string MakeRelative(string filePath) {
 			return Path.GetRelativePath(ProjectRootFolder, filePath);

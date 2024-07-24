@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Sperlich.Audio {
@@ -16,15 +17,13 @@ namespace Sperlich.Audio {
 					_fileDic = new();
 
 					foreach (AudioFile file in files) {
-						_fileDic[file.sound] = file;
+						_fileDic.Add(file.sound, file);
 					}
 				}
 
 				return _fileDic;
 			}
 		}
-
-		public void _internalAddFile(AudioFile file) => files.Add(file);
 
 		#region API
 		public int GetId(Sounds name) => Files[name].sObject.uniqueId;
