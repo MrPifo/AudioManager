@@ -12,7 +12,7 @@ public class AudioTester : MonoBehaviour {
 
 		IEnumerator ILoop() {
 			while(true) {
-				AudioManager.Play3DSound(Sounds.BulletRicochet, SoundType.Default, 1f, new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f)), 0.3f, 0.05f, 3f);
+				AudioManager.Play3DSound(Sounds.BulletRicochet, SoundType.Default, 1f, new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f)), 0.3f, 0.6f, 2f);
 				yield return new WaitForSeconds(speed);
 			}
 		}

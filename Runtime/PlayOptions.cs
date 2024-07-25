@@ -28,7 +28,7 @@ namespace Sperlich.Audio {
 		}
 		public float Pitch {
 			get {
-				return MinPitch * Mathf.Exp(Random.Range(0f, 1f) * Mathf.Log(MaxPitch / MinPitch));
+				return Mathf.Clamp(MinPitch * Mathf.Exp(Random.Range(0f, 1f) * Mathf.Log(MaxPitch / MinPitch)), MinPitch, MaxPitch);
 			}
 		}
 		public float Spatial {
@@ -39,7 +39,7 @@ namespace Sperlich.Audio {
 		public AudioClip Clip => AudioManager.Instance.Library.GetClip(Sound);
 
 		public void Apply(AudioSource source) {
-			source.pitch = Mathf.Lerp(MinPitch, MaxDistance, 0.5f);
+			source.pitch = Pitch;
 			source.clip = Clip;
 			source.loop = Loop;
 			source.spatialBlend = Spatial;
