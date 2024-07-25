@@ -30,7 +30,7 @@ namespace Sperlich.Audio {
 		public AudioLibrary Library {
 			get {
 				if (library == null) {
-					library = Resources.Load<AudioLibrary>("AudioLibrary");
+					library = Resources.Load<AudioLibrary>("AudioManager/AudioLibrary");
 				}
 				return library;
 			}
@@ -112,7 +112,7 @@ namespace Sperlich.Audio {
 			}
 		}
 		static internal AudioManager GetInstance() {
-			var prefab = Resources.Load<AudioManager>("AudioManager");
+			var prefab = Resources.Load<AudioManager>("AudioManager/AudioManager");
 			AudioManager inst = null;
 
 			if(prefab != null) {
