@@ -17,7 +17,7 @@ namespace Sperlich.Audio.Editor {
 		public static string LibraryAssetPath => Path.Combine(ResourceFolderPath, "AudioLibrary.asset");
 		public static string SoundObjectFolderPath => Path.Combine(ResourceFolderPath, "SoundObjects");
 		public static string SoundsFilePath => Path.Combine(RuntimeFolder, "Sounds.cs");
-		public static string ResourceFolderPath => Path.Combine(RuntimeFolder, "Resources");
+		public static string ResourceFolderPath => Path.Combine(Application.dataPath, "Resources", "AudioManager");
 		public static string RuntimeFolder => Path.Combine(PackageRootFolder, "Runtime");
 		public static string PackageRootFolder => Path.GetFullPath("../", GetRelativeFolderPath<AudioManager>());
 		public static string ProjectRootFolder => Path.GetFullPath("../", Application.dataPath);
