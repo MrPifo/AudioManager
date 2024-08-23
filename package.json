@@ -1,7 +1,7 @@
 {
   "name": "com.sperlich.audiomanager",
   "displayName": "AudioManager",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "This packages allows to automaticially scan for audio files, store them, and play them.",
   "unity": "2022.3",
   "unityRelease": "37f1",

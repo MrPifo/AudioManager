@@ -4,8 +4,8 @@ namespace Sperlich.Audio {
 	public class PlayOptions {
 
 		public Sounds Sound { get; set; }
-		public SoundType Type { get; set; } = SoundType.Default;
-		public AudioPreset Preset { get; set; } = AudioPreset.Default;
+		public VolumeType Type { get; set; } = default;
+		public PlayerPreset Preset { get; set; } = default;
 		public float Volume { get; set; } = 1f;
 		public float MinPitch { get; set; } = 1f;
 		public float MaxPitch { get; set; } = 1f;
@@ -14,6 +14,7 @@ namespace Sperlich.Audio {
 		/// Overrides Spatial if true.
 		/// </summary>
 		public bool Is3D { get; set; } = false;
+		public bool IsGlobalVolumeType { get; set; }
 
 		// 3D-Options
 		public float MinDistance { get; set; }
@@ -36,7 +37,7 @@ namespace Sperlich.Audio {
 			set => _spatial = value;
 		}
 
-		public AudioClip Clip => AudioManager.Instance.Library.GetClip(Sound);
+		public AudioClip Clip => AudioManager.Library.GetClip(Sound);
 
 		public void Apply(AudioSource source) {
 			source.pitch = Pitch;

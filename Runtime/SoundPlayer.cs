@@ -5,7 +5,7 @@ using UnityEngine.Events;
 namespace Sperlich.Audio {
 	public class SoundPlayer : MonoBehaviour {
 
-		public AudioPreset preset;
+		public PlayerPreset preset;
 		public bool isPlaying;
 		public bool isPaused;
 		public bool isLooping;
@@ -33,7 +33,7 @@ namespace Sperlich.Audio {
 			set => _reverbFilter = value;
 		}
 		public float Pitch { get => _source.pitch; set => _source.pitch = value; }
-		public float Volume { get => _source.volume; set => _source.volume = value; }
+		public float Volume { get => _source.volume; }
 		public float Spatial { get => _source.spatialBlend; set => _source.spatialBlend = value; }
 		public UnityEvent OnPlayComplete { get; private set; } = new UnityEvent();
 		public PlayOptions Options { get; set; }
@@ -60,6 +60,7 @@ namespace Sperlich.Audio {
 			isPlaying = true;
 			Options.Apply(_source);
 			_source.Play();
+			SetVolume(options.Volume);
 
 			if (Options.Loop == false) {
 				StartCoroutine(IDelay());
@@ -133,6 +134,19 @@ namespace Sperlich.Audio {
 		}
 		public void Free() {
 			_isFree = true;
+		}
+		public void SetVolume(float volume) {
+			Options.Volume = Mathf.Clamp01(volume);
+			float targetVolume;
+
+			if(Options.IsGlobalVolumeType) {
+				targetVolume = volume * AudioManager.GlobalVolume;
+			} else {
+				targetVolume = AudioManager.AudioVolumes[Options.Type] * volume * AudioManager.GlobalVolume;
+			}
+
+			Options.Volume = volume;
+			_source.volume = targetVolume;
 		}
 
 		public SoundPlayer FadeIn(float fadeTime) {
